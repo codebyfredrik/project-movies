@@ -1,42 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import TopBarProgress from 'react-topbar-progress-indicator';
-import * as API from '../../api/Api';
 import styles from './MovieList.module.scss';
 import { Movie } from '../../components/MovieList/Movie';
+import { useMovies } from '../../hooks/useMovies';
 
 export const MovieList = () => {
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [pageNumber, setPageNumber] = useState(1);
+  const { loading, error, movies, hasMore } = useMovies(pageNumber);
 
-  useEffect(() => {
-    setIsLoading(true);
-    API.getMovies()
-      .then(data => {
-        const { results } = data;
-        const computedResults = results
-          .filter(movie => {
-            return (
-              // Filtering out posters with inconsistent height and to get an even number of movies to display in the grid
-              movie.id !== 516700 &&
-              movie.id !== 651693 &&
-              movie.id !== 11 &&
-              movie.id !== 474350 &&
-              movie.id !== 159323 &&
-              movie.adult !== true
-            );
-          })
-          .sort(
-            (a, b) => Date.parse(b.release_date) - Date.parse(a.release_date)
-          )
-          .slice(0, 16);
-        console.log(computedResults);
-        setMovies(computedResults);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.log(err); // Configure loading error state
-      });
-  }, []);
+  const observer = useRef();
+  const lastMovieElementRef = useCallback(
+    node => {
+      let options = {
+        rootMargin: '0px 0px 600px 0px'
+      };
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore) {
+          console.log('visible');
+          setPageNumber(prevPageNumber => prevPageNumber + 1);
+        }
+      }, options);
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
 
   TopBarProgress.config({
     barColors: {
@@ -49,17 +38,25 @@ export const MovieList = () => {
 
   return (
     <div>
-      {isLoading ? (
-        <div>
-          <TopBarProgress />
-        </div>
-      ) : (
-        <div className={styles.movieList}>
-          {movies.map(movie => (
-            <Movie key={movie.id} {...movie} />
-          ))}
-        </div>
-      )}
+      <div className={styles.movieList}>
+        {movies.map((movie, index) => {
+          if (movies.length === index + 1) {
+            return (
+              <div ref={lastMovieElementRef} key={movie.id}>
+                <Movie {...movie} />
+              </div>
+            );
+          } else {
+            return (
+              <div key={movie.id}>
+                <Movie {...movie} />
+              </div>
+            );
+          }
+        })}
+        <div>{loading && <TopBarProgress />}</div>
+        <div>{error && 'Error loading'}</div>
+      </div>
     </div>
   );
 };
