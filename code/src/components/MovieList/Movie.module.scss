@@ -1,12 +1,14 @@
 .movie {
   position: relative;
   height: auto;
-  width: 100%;
+  max-width: 100%;
+  // border: 1px solid red;
 }
 
 .movie img {
+  // border: 1px solid green;
   display: block;
-  width: 100%;
+  max-width: 100%;
 }
 
 .overlay {
@@ -33,7 +35,7 @@
     transition: all 0.2s ease-in;
   }
   .movie:hover img {
-    transform: scale(1.15);
+    transform: scale(1.1);
   }
   .overlay {
     display: block;
