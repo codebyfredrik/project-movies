@@ -1,5 +1,6 @@
 .movie {
   position: relative;
+  height: auto;
   width: 100%;
 }
 
@@ -35,12 +36,15 @@
     transform: scale(1.15);
   }
   .overlay {
+    display: block;
     width: 100%;
-    display: none;
+    // display: none;
+    visibility: hidden;
     background: rgba(0, 0, 0, 0.7);
     overflow: hidden;
   }
   .movie:hover .overlay {
-    display: block;
+    // display: block;
+    visibility: visible;
   }
 }
