@@ -30,7 +30,7 @@
     overflow: hidden;
   }
   .movie img {
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in;
   }
   .movie:hover img {
     transform: scale(1.15);
@@ -38,13 +38,11 @@
   .overlay {
     display: block;
     width: 100%;
-    // display: none;
     visibility: hidden;
     background: rgba(0, 0, 0, 0.7);
     overflow: hidden;
   }
   .movie:hover .overlay {
-    // display: block;
     visibility: visible;
   }
 }
