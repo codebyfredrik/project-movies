@@ -38,11 +38,11 @@
     transform: scale(1.1);
   }
   .overlay {
-    display: block;
-    width: 100%;
+    // display: block;
+    // width: 100%;
     visibility: hidden;
     background: rgba(0, 0, 0, 0.7);
-    overflow: hidden;
+    // overflow: hidden;
   }
   .movie:hover .overlay {
     visibility: visible;
